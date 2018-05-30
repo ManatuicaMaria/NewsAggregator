@@ -1,0 +1,22 @@
+{% extends 'news/base.html' %}
+
+{% block content %}
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+  <div class="container">
+    <h3>New Feed</h3>
+  </div>
+</div>
+
+<div class="container">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <hr>
+    <button type="submit" class="btn btn-primary">Save</button>
+  </form>
+
+</div> <!-- /container -->
+
+{% endblock %}

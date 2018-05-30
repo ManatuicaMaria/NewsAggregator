@@ -1,0 +1,25 @@
+{% extends 'news/base.html' %}
+
+{% block content %}
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+  <div class="container">
+    <h3>News Feeds</h3>
+  </div>
+</div>
+
+<div class="container">
+  <a href="{% url 'feed_new' %}" class="btn btn-primary">New Feed</a>
+  <hr>
+  <ul>
+    {% for feed in feeds %}
+      <li><a href="{{feed.url}}">{{feed.title}}</a> <a href="{% url 'delete_feed' feed.id %}" class="btn btn-primary">Remove</a>
+
+      </li>
+    {% endfor %}
+  </ul>
+
+</div> <!-- /container -->
+
+{% endblock %}

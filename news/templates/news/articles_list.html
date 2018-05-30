@@ -1,0 +1,54 @@
+{% extends 'news/base.html' %}
+
+{% block extra_js%}
+    <script src="http://malsup.github.com/jquery.form.js"></script>
+{% endblock %}
+
+{% block content %}
+
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+  <div class="container">
+    <h3>Latest news from your feeds</h3>
+  </div>
+</div>
+
+<div class="container">
+  {% for row in rows %}
+  <divs>
+    {% for entry in row %}
+        <h2>{{entry.title}}</h2>
+            <h3>{{ entry.publication_date }}</h3>
+        <p>{{entry.description | safe}}</p>
+
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal{{entry.id}}">View Details</button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="modal{{entry.id}}" role="dialog">
+        <div class="modal-dialog">
+
+        <!-- Modal content-->
+            <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 style="color:black;">{{entry.title}}</h4>
+            </div>
+            <div class="modal-body">
+                <h4>{{ entry.publication_date }}</h4>
+                <hr>
+                <h4>This news article was predicted as {{ entry.real_degree }}% real</h4>
+                <hr>
+                <p>{{ entry.full_text | linebreaks }}</p>
+                <p><a href="{{entry.url}}" target="_blank" class="btn btn-primary">View Full Article</a></p>
+            </div>
+            </div>
+        </div>
+        </div><!-- /.modal -->
+    {% endfor %}
+  </divs>
+  {% endfor %}
+
+</div> <!-- /container -->
+
+{% endblock %}
