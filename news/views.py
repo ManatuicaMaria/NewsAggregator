@@ -5,6 +5,8 @@ from .models import Article, Feed
 from .forms import FeedForm
 from django.shortcuts import redirect
 
+from .fake_news_detection.PredictUtils import getTfIdfProbabilities, getWordCountProbabilities
+
 from urllib import urlopen
 
 import feedparser
@@ -34,13 +36,23 @@ def articles_list(request):
                     soup = BeautifulSoup(html_doc, 'html.parser')
 
                     article.description = entry.description
-                    paragraphs = soup.find_all(class_=re.compile("zn-body__paragraph.*"))
+                    paragraphs = soup.find_all(class_=re.compile(".*__paragraph.*"))
+
+                    # If we could not get any text we should skip the news entry
+                    if len(paragraphs) == 0:
+                        continue
 
                     text = ''
                     for paragraph in paragraphs:
                         text = text + "\n" + paragraph.get_text()
                     article.full_text = text
 
+                    predicted_class_tf_idf = getTfIdfProbabilities(text)
+                    predicted_class_word_count = getWordCountProbabilities(text)
+                    if predicted_class_tf_idf == '1':
+                        article.fake_or_real_tf_idf = "FAKE"
+                    if predicted_class_word_count == '1':
+                        article.fake_or_real_word_count = "FAKE"
                     d = datetime.datetime(*(entry.published_parsed[0:6]))
                     date_string = d.strftime('%Y-%m-%d %H:%M:%S')
 

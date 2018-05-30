@@ -18,6 +18,9 @@ class Article(models.Model):
     publication_date = models.DateTimeField()
     full_text = models.TextField()
     real_degree = models.IntegerField(default=97)
+    fake_or_real_tf_idf = models.CharField(default="REAL", max_length=10)
+    fake_or_real_word_count = models.CharField(default="REAL", max_length=10)
+
 
     def __str__(self):
         return self.title
