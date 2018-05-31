@@ -18,12 +18,9 @@
   {% for row in rows %}
   <divs>
     {% for entry in row %}
-        <div style="background-color:
-                {% if entry.fake_or_real_tf_idf == "REAL"  and entry.fake_or_real_word_count == "REAL"%}
-                    white
-                {% else %}
-                    lightpink
-                {% endif %}">
+        <div {% if entry.fake_or_real_tf_idf != "REAL"  or entry.fake_or_real_word_count != "REAL" or entry.real_degree < 70 %}
+                    style="background-color:lightpink"
+                {% endif %}>
             <h2>{{entry.title}}</h2>
                 <h3>{{ entry.publication_date }}</h3>
             <p>{{entry.description | safe}}</p>
@@ -43,9 +40,15 @@
             <div class="modal-body">
                 <h4>{{ entry.publication_date }}</h4>
                 <hr>
-                <h4>This news article was predicted by Word2vec as {{ entry.real_degree }}% REAL</h4>
-                <h4>This news article was predicted by Linear SVM classifier as {{ entry.fake_or_real_tf_idf }}</h4>
-                <h4>This news article was predicted by Passive Aggressive classifier as {{ entry.fake_or_real_word_count }}</h4>
+                <h4 {% if entry.real_degree < 70 %}
+                    style="background-color:lightpink"
+                {% endif %}>This news article was predicted by Word2vec as {{ entry.real_degree }}% REAL</h4>
+                <h4 {% if entry.fake_or_real_tf_idf != "REAL" %}
+                    style="background-color:lightpink"
+                {% endif %}>This news article was predicted by Linear SVM classifier as {{ entry.fake_or_real_tf_idf }}</h4>
+                <h4 {% if entry.fake_or_real_word_count != "REAL" %}
+                    style="background-color:lightpink"
+                {% endif %}>This news article was predicted by Passive Aggressive classifier as {{ entry.fake_or_real_word_count }}</h4>
 
                 <hr>
                 <p>{{ entry.full_text | linebreaks }}</p>

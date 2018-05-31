@@ -67,5 +67,5 @@ target/
 
 .idea/
 db.sqlite3
-fake_news_detection/
 venv-python-*/
+news/fake_news_detection/trained_models/*
