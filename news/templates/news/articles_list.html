@@ -42,7 +42,7 @@
                 <hr>
                 <h4 {% if entry.real_degree < 70 %}
                     style="background-color:lightpink"
-                {% endif %}>This news article was predicted by Word2vec as {{ entry.real_degree }}% REAL</h4>
+                {% endif %}>This news article was predicted by the convolutional network as {{ entry.real_degree }}% likely to be real</h4>
                 <h4 {% if entry.fake_or_real_tf_idf != "REAL" %}
                     style="background-color:lightpink"
                 {% endif %}>This news article was predicted by Linear SVM classifier as {{ entry.fake_or_real_tf_idf }}</h4>
