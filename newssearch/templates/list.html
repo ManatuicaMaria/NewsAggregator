@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block extra_js%}
+    <script src="http://malsup.github.com/jquery.form.js"></script>
+{% endblock %}
+
+{% block content %}
+
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+  <div class="container">
+    <h3>Enter your query:</h3>
+    <form action="/news/" method="post">
+      {% csrf_token %}
+      <input type="text" name="query" size="30"> <input type="submit" value="Search">
+      </form>
+  </div>
+</div>
+
+<div class="container">
+  {% for article in articles %}
+  <divs>
+      <div >
+        <h2 >{{ article.title }} - Real Degree: 
+          <span {% if article.fake or article.real_degree < 70 %} style="color:red" {% endif %}>
+            {{article.real_degree}} 
+          </span>
+        </h1>
+        <h3>{{ article.date }}</h3>
+        <p>{{ article.description | safe}}</p>
+        <p><a href="{{article.url}}" target="_blank" class="btn btn-primary">View Full Article</a></p>
+      </div>
+  </divs>
+  {% endfor %}
+
+</div> <!-- /container -->
+
+{% endblock %}
