@@ -30,18 +30,6 @@ tfidfTransfomer = load_tf_idf_transfomer()
 tfidf_linear_svc_clf = load_tfidf_linear_svc_clf()
 passive_aggressive_clf = load_passive_aggressive_clf()
 
-class Article:
-
-    def __init__(self, title, content, url, date, svc_fake, pa_fake, real_degree):
-        self.title = title
-        self.content = content
-        self.url = url
-        self.date = date
-        self.svc_fake = svc_fake == FAKE
-        self.pa_fake = pa_fake == FAKE
-        self.real_degree = real_degree
-
-
 def gendata(json_array, index_name=INDEX_NAME):
 	for json_obj in json_array:
 		yield {
@@ -94,9 +82,7 @@ def search(query_content,
 	highlight = {}
 	highlight["fields"] = highlight_fields
 	payload["highlight"] = highlight
-	print payload
-	json_payload = json.dumps(payload)
-	response = es.search(index="_all", body=json_payload)
+	response = es.search(index="_all", body=payload)
 	return response['hits']
 
 #Examples of usages:
