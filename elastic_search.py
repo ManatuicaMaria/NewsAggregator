@@ -69,17 +69,32 @@ def index(json_obj,
 	response = es.index(index=INDEX_NAME, doc_type='_doc', body=json_obj)
 	print response["result"]
 
-def search(	query_content,
+def search(query_content,
 	results_number=10,
-	starting_position=0):
-	match = {}
-	match["content"] = query_content #query for article that contains either one of the words in content
+	starting_position=0,
+	query_fields=["content", "title", "author", "date", "url"],
+	highlight_fields={"content": {},
+					  "title": {},
+					  "author": {},
+					  "date": {},
+					  "url": {}}):
+	should = []
+	for field in query_fields:
+		match = {}
+		match[field] = query_content #query for article that contains either one of the words in content
+		should.append({"match": match})
+	boolean = {}
+	boolean["should"] = should
 	query = {}
-	query["match"] = match
+	query["bool"] = boolean
 	payload = {}
 	payload["query"] = query
 	payload["size"] = results_number #number of results to return (for pagination)
 	payload["from"] = starting_position #starting position (for pagination)
+	highlight = {}
+	highlight["fields"] = highlight_fields
+	payload["highlight"] = highlight
+	print payload
 	json_payload = json.dumps(payload)
 	response = es.search(index="_all", body=json_payload)
 	return response['hits']
@@ -103,7 +118,8 @@ def search(	query_content,
 
 # Searching
 # print 'searching'
-# response = search(query_content="libero semper")
+# response = search(query_content="24")
 # print("Got %d Hits:" % response['total'])
 # for hit in response['hits']:
 #     print(hit["_source"])
+#     print(hit["highlight"])
