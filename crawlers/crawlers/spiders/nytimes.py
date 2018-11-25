@@ -32,6 +32,9 @@ class NytSpider(SitemapSpider):
         item['title'] = remove_unicode(title)
 
         description = response.xpath('/html/head/meta[@name="description"]/@content').extract_first()
+        if description is None:
+            return
+
         item['description'] = remove_unicode(description)
         if item['description'] is None:
             return
@@ -44,7 +47,11 @@ class NytSpider(SitemapSpider):
         if item['date'] is None:
             return
 
-        item['author'] = remove_unicode(response.xpath('//*[@itemprop="author creator"]').xpath('string()').extract_first())
+        author = response.xpath('//*[@itemprop="author creator"]').xpath('string()').extract_first()
+        if author is None:
+            return
+
+        item['author'] = remove_unicode(author)
         if item['author'] is None:
             return
 
