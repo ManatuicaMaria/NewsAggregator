@@ -1,6 +1,7 @@
 from scrapy.spiders import SitemapSpider, Spider
 from crawlers.items import NewsItem
 from dateutil.parser import parse
+from crawlers.spiders.utils import remove_unicode
 
 
 class CNNSpider(SitemapSpider):
@@ -27,9 +28,9 @@ class CNNSpider(SitemapSpider):
         if index >= 0:
             title = title[0:index]
 
-        item['title'] = title
+        item['title'] = remove_unicode(title)
 
-        item['description'] = article.xpath('//meta[@itemprop="description"]/@content').extract_first()
+        item['description'] = remove_unicode(article.xpath('//meta[@itemprop="description"]/@content').extract_first())
         if item['description'] is None:
             return
 
@@ -41,7 +42,7 @@ class CNNSpider(SitemapSpider):
         if item['date'] is None:
             return
 
-        item['author'] = article.xpath('//meta[@itemprop="author"]/@content').extract_first()
+        item['author'] = remove_unicode(article.xpath('//meta[@itemprop="author"]/@content').extract_first())
         if item['author'] is None:
             return
 
@@ -52,13 +53,12 @@ class CNNSpider(SitemapSpider):
         paragraphs = response.xpath('//div[@class="zn-body__paragraph speakable"]')
         paragraphs.extend(response.xpath('//div[@class="zn-body__paragraph"]'))
         if len(paragraphs) == 0:
-            print('no paragraphs for ' + item['title'])
             return
 
         content = []
         for p in paragraphs:
             content.extend(p.xpath('string()').extract())
 
-        item['content'] = ' '.join(content)
+        item['content'] = remove_unicode(' '.join(content))
 
         yield item

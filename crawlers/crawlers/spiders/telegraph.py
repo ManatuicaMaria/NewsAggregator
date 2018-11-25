@@ -1,6 +1,7 @@
 from scrapy.spiders import SitemapSpider, Spider
 from crawlers.items import NewsItem
 from dateutil.parser import parse
+from crawlers.spiders.utils import remove_unicode
 
 class TheTelegraphSpider(SitemapSpider):
 
@@ -19,11 +20,11 @@ class TheTelegraphSpider(SitemapSpider):
         if item['url'] is None:
             return
 
-        item['title'] = response.xpath('//meta[@property="og:title"]/@content').extract_first()
+        item['title'] = remove_unicode(response.xpath('//meta[@property="og:title"]/@content').extract_first())
         if item['title'] is None:
             return
 
-        item['description'] = response.xpath('//meta[@property="og:description"]/@content').extract_first()
+        item['description'] = remove_unicode(response.xpath('//meta[@property="og:description"]/@content').extract_first())
         if item['description'] is None:
             return
 
@@ -38,7 +39,8 @@ class TheTelegraphSpider(SitemapSpider):
         author = response.xpath('//*[@class="article-author"]')
         if author is None:
             return
-        item['author'] = ' '.join(response.xpath('//*[@class="byline__author-name" and @itemprop="name"]/@content').extract())
+        authors = ' '.join(response.xpath('//*[@class="byline__author-name" and @itemprop="name"]/@content').extract())
+        item['author'] = remove_unicode(authors)
         if item['author'] is None:
             return
 
@@ -49,12 +51,11 @@ class TheTelegraphSpider(SitemapSpider):
         content = []
         paragraphs = articleBody.xpath('//div[@class="article-body-text component version-2"]//p')
         if len(paragraphs) == 0:
-            print('no paragraphs for ' + item['title'])
             return
 
         for p in paragraphs:
             content.extend(p.xpath('string()').extract())
 
-        item['content'] = ' '.join(content)
+        item['content'] = remove_unicode(' '.join(content))
 
         yield item

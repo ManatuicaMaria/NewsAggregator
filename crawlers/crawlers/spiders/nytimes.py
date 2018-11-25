@@ -1,6 +1,7 @@
 from scrapy.spiders import SitemapSpider
 from crawlers.items import NewsItem
 from dateutil.parser import parse
+from crawlers.spiders.utils import remove_unicode
 
 
 class NytSpider(SitemapSpider):
@@ -28,17 +29,22 @@ class NytSpider(SitemapSpider):
         if index >= 0:
             title = title[0:index]
 
-        item['title'] = title
+        item['title'] = remove_unicode(title)
 
-        item['description'] = response.xpath('/html/head/meta[@name="description"]/@content').extract_first()
+        description = response.xpath('/html/head/meta[@name="description"]/@content').extract_first()
+        item['description'] = remove_unicode(description)
         if item['description'] is None:
             return
 
-        item['date'] = parse(response.xpath('//time/@datetime').extract_first())
+        date = response.xpath('//time/@datetime').extract_first()
+        if date is None:
+            return
+
+        item['date'] = parse(date)
         if item['date'] is None:
             return
 
-        item['author'] = response.xpath('//*[@itemprop="author creator"]').xpath('string()').extract_first()
+        item['author'] = remove_unicode(response.xpath('//*[@itemprop="author creator"]').xpath('string()').extract_first())
         if item['author'] is None:
             return
 
@@ -51,12 +57,11 @@ class NytSpider(SitemapSpider):
             '//*[@class="css-u5vfum StoryBodyCompanionColumn"]/div/p[@class="css-1ebnwsw e2kc3sl0"]')
 
         if len(paragraphs) == 0:
-            print('no paragraphs for ' + item['title'])
             return
 
         for p in paragraphs:
             content.extend(p.xpath('string()').extract())
 
-        item['content'] = ' '.join(content)
+        item['content'] = remove_unicode(' '.join(content))
 
         yield item
