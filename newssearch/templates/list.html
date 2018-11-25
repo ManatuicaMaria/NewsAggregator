@@ -7,13 +7,12 @@
 {% block content %}
 
 
-<!-- Main jumbotron for a primary marketing message or call to action -->
 <div class="jumbotron">
   <div class="container">
     <h3>Enter your query:</h3>
-    <form action="/news/" method="post">
+    <form action="/news/" method="GET">
       {% csrf_token %}
-      <input type="text" name="query" size="30"> <input type="submit" value="Search">
+      <input type="text" name="query" size="30" value="{{query}}"> <input type="submit" value="Search">
       </form>
   </div>
 </div>
@@ -21,15 +20,29 @@
 <div class="container">
   {% for article in articles %}
   <divs>
-      <div >
-        <h2 >{{ article.title }} - Real Degree: 
-          <span {% if article.fake or article.real_degree < 70 %} style="color:red" {% endif %}>
-            {{article.real_degree}} 
-          </span>
-        </h1>
-        <h3>{{ article.date }}</h3>
-        <p>{{ article.description | safe}}</p>
-        <p><a href="{{article.url}}" target="_blank" class="btn btn-primary">View Full Article</a></p>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1>{{ article.title }}</h1>
+          <h4>By: {{ article.author }}</h4>
+          <h4>Published: {{ article.date }}</h4>
+          
+        </div>
+        <div class="modal-body">
+          <h4 {% if article.real_degree < 70 %} style="background-color:lightpink" {% endif %}>
+            This news article was predicted by the convolutional network as {{ article.real_degree }}% likely to be real
+          </h4>
+          <h4 {% if article.svc_fake %} style="background-color:lightpink" {% endif %}>
+            This news article was predicted by Linear SVM classifier as {% if article.svc_fake %} Fake {%else%} Real {% endif %}
+          </h4>
+          <h4 {% if article.pa_fake %} style="background-color:lightpink" {% endif %}>
+            This news article was predicted by Passive Aggressive classifier as {% if article.pa_fake %} Fake {%else%} Real {% endif %}
+          </h4>
+          <hr/>
+          <p>{{ article.description | safe}}</p>
+        </div>
+        <div class="modal-footer">
+          <p><a href="{{article.url}}" target="_blank" class="btn btn-primary">View Full Article</a></p>
+        </div>
       </div>
   </divs>
   {% endfor %}

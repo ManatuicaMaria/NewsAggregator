@@ -1,9 +1,9 @@
 import json
-from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 from news.fake_news_detection.predict import load_tokenizer, load_convolutional_network, predict_news
 from news.fake_news_detection.PredictUtils import load_count_vectorizer, load_tf_idf_transfomer, \
     getWordCountProbabilities, getTfIdfProbabilities, load_passive_aggressive_clf, load_tfidf_linear_svc_clf
+from utils import es, INDEX_NAME
 
 # Payload for index configuration (set to default)
 # {
@@ -13,12 +13,6 @@ from news.fake_news_detection.PredictUtils import load_count_vectorizer, load_tf
 #     }
 # }
 
-INDEX_NAME = "news"
-# BASE_URL = "http://localhost:9200/"
-BASE_URL = "https://elastic:JRpwJMFmRdPFAC6Y5bJjGXSC@d1a97c5f7f1040619ec714d318846790.us-east-1.aws.found.io:9243"
-
-es = Elasticsearch([BASE_URL], http_auth=('username', 'password'))
-
 tokenizer = load_tokenizer()
 convolutional_network = load_convolutional_network(tokenizer)
 
@@ -26,7 +20,6 @@ countVectorizer = load_count_vectorizer()
 tfidfTransfomer = load_tf_idf_transfomer()
 tfidf_linear_svc_clf = load_tfidf_linear_svc_clf()
 passive_aggressive_clf = load_passive_aggressive_clf()
-
 
 def gendata(json_array, index_name=INDEX_NAME):
     for json_obj in json_array:
@@ -68,30 +61,7 @@ def index(json_obj,
     print response["result"]
 
 
-def search(query_content,
-           results_number=10,
-           starting_position=0,
-           query_fields=None,
-           highlight_fields=None):
-    if query_fields is None:
-        query_fields = ["content", "title", "author", "date", "url"]
-    if highlight_fields is None:
-        highlight_fields = {"content": {},
-                            "title": {},
-                            "author": {},
-                            "date": {},
-                            "url": {}}
-    should = []
-    for field in query_fields:
-        match = {field: query_content}
-        should.append({"match": match})
-    boolean = {"should": should}
-    query = {"bool": boolean}
-    payload = {"query": query, "size": results_number, "from": starting_position}
-    highlight = {"fields": highlight_fields}
-    payload["highlight"] = highlight
-    response = es.search(index="_all", body=payload)
-    return response['hits']
+
 
 # Examples of usages:
 
