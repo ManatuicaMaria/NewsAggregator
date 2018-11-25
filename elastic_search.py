@@ -14,15 +14,10 @@ DUMMY_DESCRITION="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In lu
 FAKE = "FAKE"
 REAL = "REAL"
 INDEX_NAME = "test"
-ARTICLE_ID = "1"
-BASE_URL = "http://localhost:9200/"
-INDEX_UPDATE_ENDPOINT = "/_doc/"
-SEARCH_URL = BASE_URL + "_search/"
+# BASE_URL = "http://localhost:9200/"
+BASE_URL = "https://elastic:JRpwJMFmRdPFAC6Y5bJjGXSC@d1a97c5f7f1040619ec714d318846790.us-east-1.aws.found.io:9243"
 
-es = Elasticsearch()
-
-def index_update_url(index_name, article_id):
-	return BASE_URL + index_name + INDEX_UPDATE_ENDPOINT + article_id + "?pretty"
+es = Elasticsearch([BASE_URL], http_auth=('username', 'password'))
 
 class Article:
 
