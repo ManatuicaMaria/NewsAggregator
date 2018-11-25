@@ -14,6 +14,12 @@ class AbcNewsSpider(SitemapSpider):
 
     def parse(self, response):
         item = NewsItem()
+
+        type = response.xpath('//meta[@property="og:type"]//@content').extract_first()
+
+        if "article" not in type:
+            return
+
         item['url'] = response.url
         item['date'] = parse(
             response.xpath('//*[@id="article-feed"]/article[1]//span[@class="timestamp"]').extract()[0],
@@ -22,13 +28,12 @@ class AbcNewsSpider(SitemapSpider):
         try:
             item['author'] = " ".join(
                 response.xpath('//*[@id="article-feed"]/article[1]//div[@class="author"]//text()')
-                    .extract()[1]).strip()
+                    .extract()).strip()
         except IndexError:
             item['author'] = ''
-        item['title'] = response.xpath('//*[@id="article-feed"]/article[1]//header//text()').extract()[0].strip()
+        item['title'] = response.xpath('//meta[@property="og:title"]//@content').extract()[0].strip()
         item['description'] = response.xpath(
-            '//*[@id="article-feed"]/article[1]//*[@class="article-body"]//*[@itemprop="articleBody"]//text()').extract() \
-            [0].rstrip()
+            '//meta[@property="og:description"]//@content').extract_first().rstrip()
 
         item['content'] = ' '.join(response.xpath(
             '//*[@id="article-feed"]/article[1]//*[@class="article-body"]//*[@itemprop="articleBody"]//text()').extract()).rstrip()
