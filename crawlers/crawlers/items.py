@@ -8,19 +8,10 @@
 import scrapy
 
 
-class FoxNewsItem(scrapy.Item):
-    date = scrapy.Field()
-    url = scrapy.Field()
-    title = scrapy.Field()
-    author = scrapy.Field()
-    content = scrapy.Field()
-    description = scrapy.Field()
-
 class NewsItem(scrapy.Item):
+    date = scrapy.Field()
+    url = scrapy.Field()
     title = scrapy.Field()
     author = scrapy.Field()
-    date = scrapy.Field()
-    description = scrapy.Field()
     content = scrapy.Field()
-    url = scrapy.Field()
-    
+    description = scrapy.Field()
