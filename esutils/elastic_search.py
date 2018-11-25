@@ -14,7 +14,7 @@ from news.fake_news_detection.PredictUtils import load_count_vectorizer, load_tf
 # }
 
 INDEX_NAME = "news"
-#BASE_URL = "http://localhost:9200/"
+# BASE_URL = "http://localhost:9200/"
 BASE_URL = "https://elastic:JRpwJMFmRdPFAC6Y5bJjGXSC@d1a97c5f7f1040619ec714d318846790.us-east-1.aws.found.io:9243"
 
 es = Elasticsearch([BASE_URL], http_auth=('username', 'password'))
@@ -34,6 +34,7 @@ def gendata(json_array, index_name=INDEX_NAME):
             "_index": index_name,
             "_type": "_doc",
             "doc": json_obj,
+            "_id": json_obj["url"]
         }
 
 
@@ -63,7 +64,7 @@ def index(json_obj,
     json_obj["real_degree"] = int(real_degree[0][0] * 100)
     json_obj["pa_fake"] = pa_result
     json_obj["svc_fake"] = svc_result
-    response = es.index(index=index_name, doc_type='_doc', body=json_obj)
+    response = es.index(index=index_name, doc_type='_doc', body=json_obj, id=json_obj["url"])
     print response["result"]
 
 
@@ -103,8 +104,8 @@ def search(query_content,
 # print 'indexing articles'
 # json_article = {}
 # json_article["title"] = "title"
-# json_article["content"] = DUMMY_DESCRITION
-# json_article["url"] = URL
+# json_article["content"] = "bla"
+# json_article["url"] = "URL"
 # json_article["date"] = "24-11-2018"
 # json_articles = [json_article, json_article]
 # index_bulk(json_array=json_articles)
