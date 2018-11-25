@@ -12,10 +12,6 @@ from news.fake_news_detection.PredictUtils import load_count_vectorizer, load_tf
 #     }
 # }
 
-URL = "https://google.com"
-DUMMY_DESCRITION="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In luctus lobortis luctus. Duis eget lacus ultrices, aliquam arcu id, interdum quam. Praesent sollicitudin cursus blandit. Vestibulum ut libero semper, iaculis arcu et, vehicula felis. Pellentesque interdum ornare felis. Praesent at felis lacus. Etiam ac dapibus felis, sed faucibus lectus. Vestibulum ullamcorper eros eu diam ornare, auctor faucibus erat laoreet. Phasellus lobortis dolor at scelerisque pretium. Nulla facilisi. Nam et commodo dui. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nullam molestie sapien sed est auctor sollicitudin."
-FAKE = "FAKE"
-REAL = "REAL"
 INDEX_NAME = "news"
 # BASE_URL = "http://localhost:9200/"
 BASE_URL = "https://elastic:JRpwJMFmRdPFAC6Y5bJjGXSC@d1a97c5f7f1040619ec714d318846790.us-east-1.aws.found.io:9243"
