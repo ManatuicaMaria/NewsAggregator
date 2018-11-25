@@ -2,6 +2,7 @@ from scrapy.spiders import SitemapSpider
 from crawlers.items import NewsItem
 
 from datetime import datetime
+from utils import remove_unicode
 
 
 class BBCNewsSpider(SitemapSpider):
@@ -25,13 +26,13 @@ class BBCNewsSpider(SitemapSpider):
         if lang is None or "en" not in lang or "article" not in type:
             return
 
-
         item['url'] = response.url
 
         try:
             item['date'] = datetime.utcfromtimestamp(float(
                 response.xpath(
-                    '//div[@class="story-body"]//div[contains(@class,"date date--v2")]//@data-seconds').extract_first()))
+                    '//div[@class="story-body"]//div[contains(@class,"date date--v2")]//@data-seconds').extract_first())).strftime(
+                "%Y-%m-%d %H:%M:%S")
         except TypeError:
             item['date'] = ''
         try:
@@ -46,7 +47,7 @@ class BBCNewsSpider(SitemapSpider):
         item['description'] = response.xpath(
             '//*[@id="responsive-news"]//meta[@property="og:description"]//@content').extract_first().rstrip()
 
-        item['content'] = ' '.join(response.xpath(
-            '//div[@class="story-body"]//div[@property="articleBody"]//p//text()').extract()).rstrip()
+        item['content'] = remove_unicode(' '.join(response.xpath(
+            '//div[@class="story-body"]//div[@property="articleBody"]//p//text()').extract()).rstrip())
 
         yield item
