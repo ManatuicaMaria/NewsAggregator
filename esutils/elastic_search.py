@@ -13,19 +13,9 @@ from news.fake_news_detection.PredictUtils import load_count_vectorizer, load_tf
 #     }
 # }
 
-URL = "https://google.com"
-DUMMY_DESCRIPTION = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In luctus lobortis luctus. Duis eget " \
-                    "lacus ultrices, aliquam arcu id, interdum quam. Praesent sollicitudin cursus blandit. Vestibulum " \
-                    "ut libero semper, iaculis arcu et, vehicula felis. Pellentesque interdum ornare felis. Praesent " \
-                    "at felis lacus. Etiam ac dapibus felis, sed faucibus lectus. Vestibulum ullamcorper eros eu diam " \
-                    "ornare, auctor faucibus erat laoreet. Phasellus lobortis dolor at scelerisque pretium. Nulla " \
-                    "facilisi. Nam et commodo dui. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices " \
-                    "posuere cubilia Curae; Nullam molestie sapien sed est auctor sollicitudin. "
-FAKE = "FAKE"
-REAL = "REAL"
 INDEX_NAME = "news"
-BASE_URL = "http://localhost:9200/"
-# BASE_URL = "https://elastic:JRpwJMFmRdPFAC6Y5bJjGXSC@d1a97c5f7f1040619ec714d318846790.us-east-1.aws.found.io:9243"
+#BASE_URL = "http://localhost:9200/"
+BASE_URL = "https://elastic:JRpwJMFmRdPFAC6Y5bJjGXSC@d1a97c5f7f1040619ec714d318846790.us-east-1.aws.found.io:9243"
 
 es = Elasticsearch([BASE_URL], http_auth=('username', 'password'))
 
@@ -36,18 +26,6 @@ countVectorizer = load_count_vectorizer()
 tfidfTransfomer = load_tf_idf_transfomer()
 tfidf_linear_svc_clf = load_tfidf_linear_svc_clf()
 passive_aggressive_clf = load_passive_aggressive_clf()
-
-
-class Article:
-
-    def __init__(self, title, content, url, date, svc_fake, pa_fake, real_degree):
-        self.title = title
-        self.content = content
-        self.url = url
-        self.date = date
-        self.svc_fake = svc_fake == FAKE
-        self.pa_fake = pa_fake == FAKE
-        self.real_degree = real_degree
 
 
 def gendata(json_array, index_name=INDEX_NAME):
@@ -68,7 +46,7 @@ def index_bulk(json_array,
     svc_results = [getTfIdfProbabilities(news_content, countVectorizer, tfidfTransfomer, tfidf_linear_svc_clf) for
                    news_content in news_contents]
     for json_obj, real_degree, pa_result, svc_result in zip(*[json_array, real_degrees, pa_results, svc_results]):
-        json_obj["real_degree"] = int(real_degree[0] * 100)
+        json_obj["real_degree"] = int(real_degree[0]*100)
         json_obj["pa_fake"] = pa_result
         json_obj["svc_fake"] = svc_result
     response = bulk(es, gendata(json_array, index_name), stats_only=True)
@@ -91,19 +69,34 @@ def index(json_obj,
 
 def search(query_content,
            results_number=10,
-           starting_position=0):
-    match = {"content": query_content}
-    query = {"match": match}
+           starting_position=0,
+           query_fields=None,
+           highlight_fields=None):
+    if query_fields is None:
+        query_fields = ["content", "title", "author", "date", "url"]
+    if highlight_fields is None:
+        highlight_fields = {"content": {},
+                            "title": {},
+                            "author": {},
+                            "date": {},
+                            "url": {}}
+    should = []
+    for field in query_fields:
+        match = {field: query_content}
+        should.append({"match": match})
+    boolean = {"should": should}
+    query = {"bool": boolean}
     payload = {"query": query, "size": results_number, "from": starting_position}
-    json_payload = json.dumps(payload)
-    response = es.search(index="_all", body=json_payload)
+    highlight = {"fields": highlight_fields}
+    payload["highlight"] = highlight
+    response = es.search(index="_all", body=payload)
     return response['hits']
 
 # Examples of usages:
 
 # Indexing
 # print 'indexing article'
-# article = Article("title", DUMMY_DESCRIPTION, URL, "24-11-2018", FAKE, REAL, 80)
+# article = Article("title", DUMMY_DESCRITION, URL, "24-11-2018", FAKE, REAL, 80)
 # json_article = json.dumps(article.__dict__)
 # index(json_obj=json_article)
 
@@ -118,7 +111,8 @@ def search(query_content,
 
 # Searching
 # print 'searching'
-# response = search(query_content="libero semper")
+# response = search(query_content="24")
 # print("Got %d Hits:" % response['total'])
 # for hit in response['hits']:
 #     print(hit["_source"])
+#     print(hit["highlight"])

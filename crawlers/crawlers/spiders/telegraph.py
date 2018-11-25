@@ -32,7 +32,7 @@ class TheTelegraphSpider(SitemapSpider):
         if date is None:
             return
 
-        item['date'] = parse(date)
+        item['date'] = parse(date).strftime("%Y-%m-%d %H:%M:%S")
         if item['date'] is None:
             return
 
