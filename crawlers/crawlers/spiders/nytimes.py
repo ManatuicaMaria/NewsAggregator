@@ -7,7 +7,6 @@ class NytSpider(SitemapSpider):
     name = 'nytimes'
     allowed_domains = ['www.nytimes.com']
     # not sure if this could be used: https://spiderbites.nytimes.com/
-    # sitemap_urls = ['https://www.nytimes.com/sitemaps/sitemap_news/sitemap.xml.gz']
     sitemap_urls = ['https://www.nytimes.com/sitemaps/www.nytimes.com/sitemap.xml.gz']
 
     def parse(self, response):
