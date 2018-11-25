@@ -16,3 +16,11 @@ class FoxNewsItem(scrapy.Item):
     content = scrapy.Field()
     description = scrapy.Field()
 
+class NewsItem(scrapy.Item):
+    title = scrapy.Field()
+    author = scrapy.Field()
+    date = scrapy.Field()
+    description = scrapy.Field()
+    content = scrapy.Field()
+    url = scrapy.Field()
+    
