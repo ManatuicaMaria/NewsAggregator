@@ -8,7 +8,11 @@ class NytSpider(SitemapSpider):
     name = 'nytimes'
     allowed_domains = ['www.nytimes.com']
     # not sure if this could be used: https://spiderbites.nytimes.com/
-    sitemap_urls = ['https://www.nytimes.com/sitemaps/www.nytimes.com/sitemap.xml.gz']
+    # Using the previous sitemap "https://www.nytimes.com/sitemaps/www.nytimes.com/sitemap.xml.gz"
+    # was taking too long to find a number of articles, and they were very old
+    # We could also use https://www.nytimes.com/sitemaps/www.nytimes.com/2016_election_sitemap.xml.gz
+    # since our training data sets for the model included election news
+    sitemap_urls = ['https://www.nytimes.com/sitemaps/sitemap_news/sitemap.xml.gz']
 
     def parse(self, response):
         article = response.xpath('//html[@itemtype="http://schema.org/NewsArticle"]')
@@ -17,15 +21,15 @@ class NytSpider(SitemapSpider):
 
         item = NewsItem()
 
-        item['url'] = article.xpath('//html/@itemid').extract_first()
+        item['url'] = response.xpath('//html[@itemtype="http://schema.org/NewsArticle"]/@itemid').extract_first()
         if item['url'] is None:
             return
 
-        title = response.xpath('///html/head/title/text()').extract_first()
+        title = response.xpath('//html/head/title/text()').extract_first()
         if title is None:
             return
 
-        index = title.index(' - The New York Times')
+        index = title.index('- The New York Times')
         if index >= 0:
             title = title[0:index]
 
@@ -44,24 +48,18 @@ class NytSpider(SitemapSpider):
         if item['date'] is None:
             return
 
-        item['author'] = remove_unicode(response.xpath('//*[@itemprop="author creator"]').xpath('string()').extract_first())
+        item['author'] = (" ".join(response.xpath('//*[@itemprop="author creator"]//text()').extract())).strip()
         if item['author'] is None:
-            return
+            item['author'] = ''
 
-        articleBody = response.xpath('//*[@id="story"]/section[@name="articleBody"]')
+        articleBody = response.xpath('//*[@id="story"]/section[@name="articleBody"]').extract_first()
         if articleBody is None:
             return
 
-        content = []
-        paragraphs = articleBody.xpath(
-            '//*[@class="css-u5vfum StoryBodyCompanionColumn"]/div/p[@class="css-1ebnwsw e2kc3sl0"]')
-
-        if len(paragraphs) == 0:
+        content = " ".join(response.xpath('//*[@id="story"]/section[@name="articleBody"]//p/text()').extract())
+        if content is None:
             return
 
-        for p in paragraphs:
-            content.extend(p.xpath('string()').extract())
-
-        item['content'] = remove_unicode(' '.join(content))
+        item['content'] = remove_unicode(content)
 
         yield item
