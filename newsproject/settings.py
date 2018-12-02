@@ -25,7 +25,7 @@ SECRET_KEY = '0jwu0gf*n2pczvmz!br2e+8_09&!my7ib0($wu6(h8iy)zf+js'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0', 'sri-news-search.herokuapp.com']
 
 
 # Application definition
