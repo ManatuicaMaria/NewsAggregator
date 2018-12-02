@@ -22,7 +22,7 @@ def search(request):
         # TODO: highlights
         query = request.GET['query']
         results = elastic_search(query, results_number=PAGE_SIZE, starting_position=0)
-        articles = [Article(**results["hits"][i]['_source']["doc"]) for i in range(PAGE_SIZE)]
+        articles = [Article(**results["hits"][i]['_source']["doc"]) for i in range(min(PAGE_SIZE, results["total"]))]
         
         # Used for debuging
         # articles = [Article("title", "description", "18-11-2018", "Teo", "https://google.com" , 60, True, False)]
