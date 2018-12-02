@@ -80,10 +80,3 @@ def index(json_obj,
 # json_articles = [json_article, json_article]
 # index_bulk(json_array=json_articles)
 
-# Searching
-# print 'searching'
-# response = search(query_content="24")
-# print("Got %d Hits:" % response['total'])
-# for hit in response['hits']:
-#     print(hit["_source"])
-#     print(hit["highlight"])

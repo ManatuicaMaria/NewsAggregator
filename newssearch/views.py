@@ -1,11 +1,14 @@
 from django.shortcuts import render
 from esutils.search import search as elastic_search
 
+PAGE_SIZE=30
+
 class Article:
     
-    def __init__(self, title, description, date, author, url, real_degree, pa_fake, svc_fake):
+    def __init__(self, title, description, content, date, author, url, real_degree, pa_fake, svc_fake):
         self.title = title
         self.description = description
+        self.content = content
         self.date = date
         self.author = author
         self.url = url
@@ -15,10 +18,11 @@ class Article:
 
 def search(request):
     if 'query' in request.GET:
-        # TODO: paginare sau maxim 30 entries
+        # TODO: paginare
+        # TODO: highlights
         query = request.GET['query']
-        results = elastic_search(query)
-        articles = [Article(**results["hits"][i]['_source']) for i in range(results["total"])]
+        results = elastic_search(query, results_number=PAGE_SIZE, starting_position=0)
+        articles = [Article(**results["hits"][i]['_source']["doc"]) for i in range(PAGE_SIZE)]
         
         # Used for debuging
         # articles = [Article("title", "description", "18-11-2018", "Teo", "https://google.com" , 60, True, False)]

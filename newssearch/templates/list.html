@@ -8,10 +8,9 @@
 
 
 <div class="jumbotron">
-  <div class="container">
+  <div style="margin-top: 1rem;" class="container">
     <h3>Enter your query:</h3>
     <form action="/news/" method="GET">
-      {% csrf_token %}
       <input type="text" name="query" size="30" value="{{query}}"> <input type="submit" value="Search">
       </form>
   </div>
@@ -19,7 +18,7 @@
 
 <div class="container">
   {% for article in articles %}
-  <divs>
+  <div style="margin-bottom: 2rem;">
       <div class="modal-content">
         <div class="modal-header">
           <h1>{{ article.title }}</h1>
@@ -44,7 +43,7 @@
           <p><a href="{{article.url}}" target="_blank" class="btn btn-primary">View Full Article</a></p>
         </div>
       </div>
-  </divs>
+  </div>
   {% endfor %}
 
 </div> <!-- /container -->
