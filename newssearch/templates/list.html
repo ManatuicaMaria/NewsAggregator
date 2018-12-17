@@ -46,6 +46,26 @@
   </div>
   {% endfor %}
 
-</div> <!-- /container -->
+  {% if articles|length != 0 %}
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+        
+        <li class="page-item {% if first_page %} disabled {% endif %}">
+          <a class="page-link" {% if first_page == False %} href="?query={{query}}&page={{current_page|add:'-1'}}" {% endif %}>Previous</a>
+        </li>
+        
+        {% for page in pages %}
+          <li class="page-item {% if page == current_page %} active {% endif %}">
+            <a class="page-link " href="?query={{query}}&page={{page}}">{{page}}</a>
+          </li>
+        {% endfor %}
 
+        <li class="page-item {% if last_page %} disabled {% endif %}">
+          <a class="page-link" {% if last_page  == False %} href="?query={{query}}&page={{current_page|add:'1'}}" {% endif %}>Next</a>
+        </li>
+        
+      </ul>
+    </nav>
+  {% endif %}
+</div> <!-- /container -->
 {% endblock %}
