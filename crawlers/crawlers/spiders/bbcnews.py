@@ -39,7 +39,10 @@ class BBCNewsSpider(SitemapSpider):
             _author = response.xpath('//*//span[@class="byline__name"]//text()').extract_first()
             if _author is None:
                 item['author'] = 'BBC News'
-            else: 
+            else:
+                _author_split = _author.split(" ")
+                if _author_split[0] == "By":
+                    _author = " ".join(_author_split[1:])
                 item['author'] =  _author + " | BBC News"
             #
             # " ".join(
