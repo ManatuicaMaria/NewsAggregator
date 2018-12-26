@@ -36,11 +36,20 @@ class BBCNewsSpider(SitemapSpider):
         except TypeError:
             item['date'] = ''
         try:
-            item['author'] = " ".join(
-                response.xpath('//*[@id="responsive-news"]//meta[@property="article:author"]//@content')
-                    .extract()[0]).strip()
+            _author = response.xpath('//*//span[@class="byline__name"]//text()').extract_first()
+            if _author is None:
+                item['author'] = 'BBC News'
+            else: 
+                item['author'] =  _author + " | BBC News"
+            #
+            # " ".join(
+            #     response.xpath('//*[@id="responsive-news"]//meta[@property="article:author"]//@content')
+            #         .extract()[0]).strip()
+            #
+            # intoarce https://www.facebook.com/bbcnews
         except IndexError:
-            item['author'] = ''
+            item['author'] = 'BBC News'
+
         item['title'] = response.xpath(
             '//*[@id="responsive-news"]//meta[@property="og:title"]//@content').extract_first().strip()
 

@@ -4,6 +4,11 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
+import sys
+sys.path.insert(0,'..')
+sys.path.insert(0,'../..')
+sys.path.insert(0,'../../..')
+
 from esutils import elastic_search as es
 
 
