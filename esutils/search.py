@@ -13,11 +13,11 @@ def search(query_content,
     if query_fields is None:
         query_fields = ["doc.content", "doc.title", "doc.author", "doc.date", "doc.url"]
     if highlight_fields is None:
-        highlight_fields = {"content": {},
-                            "title": {},
-                            "author": {},
-                            "date": {},
-                            "url": {}}
+        highlight_fields = {"doc.content": {},
+                            "doc.title": {},
+                            "doc.author": {},
+                            "doc.date": {},
+                            "doc.url": {}}
     should = []
     for field in query_fields:
         match = {field: query_content}

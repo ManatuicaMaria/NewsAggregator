@@ -24,6 +24,8 @@
           <h1>{{ article.title }}</h1>
           <h4>By: {{ article.author }}</h4>
           <h4>Published: {{ article.date }}</h4>
+          <!-- <h4>Url: {{ article.url }}</h4> -->
+          
           
         </div>
         <div class="modal-body">
@@ -37,7 +39,9 @@
             This news article was predicted by Passive Aggressive classifier as {% if article.pa_fake %} Fake {%else%} Real {% endif %}
           </h4>
           <hr/>
-          <p>{{ article.description | safe}}</p>
+          <p><b>Highlights: </b> {{article.highlight | safe}}</p>
+          <hr/>
+          <p><b>Description: </b> {{article.description | safe}}</p>
         </div>
         <div class="modal-footer">
           <p><a href="{{article.url}}" target="_blank" class="btn btn-primary">View Full Article</a></p>

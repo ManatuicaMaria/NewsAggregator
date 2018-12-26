@@ -2,12 +2,12 @@ import math
 from django.shortcuts import render
 from esutils.search import search as elastic_search
 
-PAGE_SIZE=30
+PAGE_SIZE=10
 DELTA=2
 MIN_PAGE=1
 class Article:
     
-    def __init__(self, title, description, content, date, author, url, real_degree, pa_fake, svc_fake):
+    def __init__(self, title, description, content, date, author, url, highlight, real_degree, pa_fake, svc_fake):
         self.title = title
         self.description = description
         self.content = content
@@ -17,16 +17,25 @@ class Article:
         self.real_degree = real_degree
         self.pa_fake = pa_fake
         self.svc_fake = svc_fake
+        processed_highlight = "... "
+        for key in highlight:
+            if key == "doc.url":
+                continue
+            processed_highlight+=" ... ".join(highlight[key]) + " ... "
+        self.highlight = processed_highlight
 
 def search(request):
     if 'query' in request.GET:
-        # TODO: highlights
         query = request.GET['query']
-        results = elastic_search(query, results_number=PAGE_SIZE, starting_position=(page - 1) * PAGE_SIZE)
-        articles = [Article(**results["hits"][i]['_source']["doc"]) for i in range(min(PAGE_SIZE, results["total"]))]
+        page = int(request.GET['page']) if 'page' in request.GET else MIN_PAGE
+        results = elastic_search(query, \
+            results_number=PAGE_SIZE, \
+            starting_position=(page - 1) * PAGE_SIZE)
+        articles = [Article(**dict(results["hits"][i]['_source']["doc"].items() \
+            + [("highlight", results["hits"][i]['highlight'])])) \
+            for i in range(min(PAGE_SIZE, results["total"]))]
         
         # Pagination
-        page = int(request.GET['page']) if 'page' in request.GET else MIN_PAGE
         total_pages = int(math.ceil(1.0 * results["total"] / PAGE_SIZE))
         page = max(min(page, total_pages), MIN_PAGE)
         
@@ -38,8 +47,6 @@ def search(request):
         pages = range(min_page, max_page + 1)
         # End of Pagination
 
-        # Used for debuging
-        # articles = [Article("title", "description", "18-11-2018", "Teo", "https://google.com" , 60, True, False)]
         return render(request, 'list.html', {'articles': articles, 'query': query, 'pages': pages, 'current_page': page, 'first_page': page == MIN_PAGE, 'last_page': page == total_pages })
     else:
         return render(request, 'list.html')
