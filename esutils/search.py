@@ -11,7 +11,7 @@ def search(query_content,
            query_fields=None,
            highlight_fields=None):
     if query_fields is None:
-        query_fields = ["doc.content", "doc.title", "doc.author", "doc.date", "doc.url"]
+        query_fields = ["doc.content", "doc.title", "doc.author", "doc.url"]
     if highlight_fields is None:
         highlight_fields = {"doc.content": {},
                             "doc.title": {},
