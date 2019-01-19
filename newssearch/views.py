@@ -14,9 +14,10 @@ class Article:
         self.date = date
         self.author = author
         self.url = url
-        self.real_degree = real_degree
-        self.pa_fake = pa_fake
-        self.svc_fake = svc_fake
+        self.fake = real_degree < 70 and svc_fake == '1'
+        self.true = real_degree >= 70 and svc_fake == '0'
+        self.not_sure = not (self.fake or self.true) 
+        # print(real_degree, svc_fake, self.fake, self.true, self.not_sure)
         processed_highlight = "... "
         for key in highlight:
             if key == "doc.url":

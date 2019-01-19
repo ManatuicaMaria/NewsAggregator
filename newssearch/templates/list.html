@@ -24,20 +24,19 @@
           <h1>{{ article.title }}</h1>
           <h4>By: {{ article.author }}</h4>
           <h4>Published: {{ article.date }}</h4>
-          <!-- <h4>Url: {{ article.url }}</h4> -->
-          
-          
+          <!-- <h4>Url: {{ article.url }}</h4> -->  
         </div>
+        
         <div class="modal-body">
-          <h4 {% if article.real_degree < 70 %} style="background-color:lightpink" {% endif %}>
-            This news article was predicted by the convolutional network as {{ article.real_degree }}% likely to be real
-          </h4>
-          <h4 {% if article.svc_fake %} style="background-color:lightpink" {% endif %}>
-            This news article was predicted by Linear SVM classifier as {% if article.svc_fake %} Fake {%else%} Real {% endif %}
-          </h4>
-          <h4 {% if article.pa_fake %} style="background-color:lightpink" {% endif %}>
-            This news article was predicted by Passive Aggressive classifier as {% if article.pa_fake %} Fake {%else%} Real {% endif %}
-          </h4>
+          {% if article.true %}
+            <h4 style="background-color:green"> This news article is likely to be real</h4>
+          {% endif %}
+          {% if article.fake %}
+            <h4 style="background-color:red"> This news article is likely to be fake</h4>
+          {% endif %}
+          {% if article.not_sure %}
+            <h4 style="background-color:yellow"> We are unsure about this news article. Please read it carefully.</h4>  
+          {% endif %}
           <hr/>
           <p><b>Highlights: </b> {{article.highlight | safe}}</p>
           <hr/>
