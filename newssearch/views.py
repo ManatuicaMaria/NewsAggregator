@@ -1,8 +1,7 @@
 import math
-from datetime import datetime
+from dateutil import parser
 from django.shortcuts import render
 from esutils.search import search as elastic_search
-from dateutil import parser
 
 PAGE_SIZE=10
 DELTA=2
