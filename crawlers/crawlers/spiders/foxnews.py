@@ -17,7 +17,7 @@ class FoxNewsSpider(SitemapSpider):
             "title": remove_unicode(response.xpath('//meta[@name="dc.title"]/@content').extract()[0].strip()),
             "author": " ".join(response.xpath('//*[@class="article-source"]//text()').extract()).strip(),
             "date": parse(response.xpath('//meta[@name="dc.date"]/@content').extract()[0], fuzzy=True).strftime(
-                "%Y-%m-%d %H:%M:%S"),
+                "%Y-%m-%dT%H:%M:%S"),
             "description": remove_unicode(
                 response.xpath('//meta[@name="dc.description"]/@content').extract()[0].strip()),
             "content": remove_unicode(

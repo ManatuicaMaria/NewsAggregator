@@ -24,7 +24,7 @@ class AbcNewsSpider(SitemapSpider):
         item['url'] = response.url
         item['date'] = parse(
             response.xpath('//*[@id="article-feed"]/article[1]//span[@class="timestamp"]').extract()[0],
-            fuzzy=True).strftime("%Y-%m-%d %H:%M:%S")
+            fuzzy=True).strftime("%Y-%m-%dT%H:%M:%S")
 
         try:
             item['author'] = " ".join(

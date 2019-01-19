@@ -31,8 +31,8 @@ class BBCNewsSpider(SitemapSpider):
         try:
             item['date'] = datetime.utcfromtimestamp(float(
                 response.xpath(
-                    '//div[@class="story-body"]//div[contains(@class,"date date--v2")]//@data-seconds').extract_first())).strftime(
-                "%Y-%m-%d %H:%M:%S")
+                    '//div[@class="story-body"]//div[contains(@class,"date date--v2")]//@data-seconds').extract_first())) \
+                .strftime("%Y-%m-%dT%H:%M:%S")
         except TypeError:
             item['date'] = ''
         try:
@@ -43,7 +43,7 @@ class BBCNewsSpider(SitemapSpider):
                 _author_split = _author.split(" ")
                 if _author_split[0] == "By":
                     _author = " ".join(_author_split[1:])
-                item['author'] =  _author + " | BBC News"
+                item['author'] = _author + " | BBC News"
             #
             # " ".join(
             #     response.xpath('//*[@id="responsive-news"]//meta[@property="article:author"]//@content')

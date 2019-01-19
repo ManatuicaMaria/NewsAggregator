@@ -28,7 +28,7 @@ class InfowarsSpider(scrapy.Spider):
             "title": remove_unicode(response.xpath('//meta[@property="og:title"]/@content').extract()[0].strip()),
             "author": " ".join(response.xpath('//span[@class="author"]//text()').extract()[1:-1]).strip(),
             "date": parse(response.xpath('//meta[@property="article:published_time"]/@content').extract()[0].strip(),
-                          fuzzy=True).strftime("%Y-%m-%d %H:%M:%S"),
+                          fuzzy=True).strftime("%Y-%m-%dT%H:%M:%S"),
             "description": remove_unicode(
                 response.xpath('//meta[@property="og:description"]/@content').extract()[0].strip()),
             "content": self._get_content(response),
