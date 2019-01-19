@@ -34,7 +34,7 @@ def search(request):
             starting_position=(page - 1) * PAGE_SIZE)
         articles = [Article(**dict(results["hits"][i]['_source']["doc"].items() \
             + [("highlight", results["hits"][i]['highlight'])])) \
-            for i in range(min(PAGE_SIZE, results["total"]))]
+            for i in range(len(results["hits"]))]
         
         # Pagination
         total_pages = int(math.ceil(1.0 * results["total"] / PAGE_SIZE))
