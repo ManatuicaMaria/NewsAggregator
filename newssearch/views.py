@@ -1,6 +1,8 @@
 import math
+from datetime import datetime
 from django.shortcuts import render
 from esutils.search import search as elastic_search
+from dateutil import parser
 
 PAGE_SIZE=10
 DELTA=2
@@ -11,13 +13,12 @@ class Article:
         self.title = title
         self.description = description
         self.content = content
-        self.date = date
+        self.date = parser.parse(date).strftime('%d-%m-%Y')
         self.author = author
         self.url = url
         self.fake = real_degree < 70 and svc_fake == '1'
         self.true = real_degree >= 70 and svc_fake == '0'
         self.not_sure = not (self.fake or self.true) 
-        # print(real_degree, svc_fake, self.fake, self.true, self.not_sure)
         processed_highlight = "... "
         for key in highlight:
             if key == "doc.url":
